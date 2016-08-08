@@ -22,6 +22,7 @@ namespace Grades
             WriteResult("Average", stats.AverageGrade);
             WriteResult("Highest Grade",(int) stats.HighestGrade);
             WriteResult("Lowest Grade", (int) stats.LowestGrade);
+            book.Name = "Finished Grade Book";
         }
 
         static void OnNameChanged(object sender, NameChangedEventArgs args)
