@@ -10,6 +10,7 @@ namespace Grades
             IGradeTracker book = CreateGradebook();
             // TODO: Fix This
             //book.NameChanged += OnNameChanged;
+            // Test
             GetBookName(book);
             AddGrades(book);
             SaveGrades(book);
