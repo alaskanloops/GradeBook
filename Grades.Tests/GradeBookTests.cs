@@ -1,10 +1,4 @@
-﻿using Grades;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Grades.Tests
 {
@@ -43,6 +37,17 @@ namespace Grades.Tests
 
             GradeStatistics result = book.ComputeStatistics();
             Assert.AreEqual(85.16, result.AverageGrade, 0.01);
+        }
+
+        [TestMethod]
+        public void ComputeGrade()
+        {
+            GradeBook book = new GradeBook();
+            book.AddGrade(100);
+            book.AddGrade(50);
+
+            GradeStatistics result = book.ComputeStatistics();
+            Assert.AreEqual("C", result.LetterGrade);
         }
 
     }

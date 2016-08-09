@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Grades
 {
-    public class GradeBook
+    public class GradeBook : GradeTracker
     {
         public GradeBook()
         {
@@ -14,12 +16,14 @@ namespace Grades
             name = "Empty";
         }
 
-        public GradeStatistics ComputeStatistics()
+        public override GradeStatistics ComputeStatistics()
         {
+            Console.WriteLine("Gradebook::ComputeStatistcs");
+
             GradeStatistics stats = new GradeStatistics();
 
             float sum = 0;
-            foreach(float grade in grades)
+            foreach (float grade in grades)
             {
                 stats.HighestGrade = Math.Max(grade, stats.HighestGrade);
                 stats.LowestGrade = Math.Min(grade, stats.LowestGrade);
@@ -30,36 +34,24 @@ namespace Grades
             return stats;
         }
 
-        public void AddGrade(float grade)
+        public override void WriteGrades(TextWriter destination)
+        {
+            for (int i = grades.Count; i > 0; i--)
+            {
+                destination.WriteLine(grades[i - 1]);
+            }
+        }
+
+        public override void AddGrade(float grade)
         {
             grades.Add(grade);
         }
 
-        private string name;
-        public string Name
+        public override IEnumerator GetEnumerator()
         {
-            get
-            {
-                return name;
-            } 
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    if (name != value)
-                    {
-                        NameChangedEventArgs args = new NameChangedEventArgs();
-                        args.ExistingName = name;
-                        args.NewName = value;
-                        NameChanged(this, args);
-                    }
-                    name = value;
-                }
-            }
+            return grades.GetEnumerator();
         }
 
-        public event NameChangedDelegate NameChanged;
-
-        private List<float> grades;
+        protected List<float> grades;
     }
 }

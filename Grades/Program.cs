@@ -1,28 +1,69 @@
 ﻿using System;
+using System.IO;
 
 namespace Grades
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            IGradeTracker book = CreateGradebook();
 
-            GradeBook book = new GradeBook();
+            //book.NameChanged += OnNameChanged;
+            GetBookName(book);
+            AddGrades(book);
+            SaveGrades(book);
+            WriteResults(book);
+            book.Name = "Finished Grade Book";
+        }
 
-            book.NameChanged += OnNameChanged;
+        private static IGradeTracker CreateGradebook()
+        {
+            return new ThrowAwayGradeBook();
+        }
 
-            book.Name = "Joe's Grade Book";
-            book.Name = "Another Grade Book";
-            book.AddGrade(91);
-            book.AddGrade(95.5f);
-            book.AddGrade(75);
-
+        private static void WriteResults(IGradeTracker book)
+        {
             GradeStatistics stats = book.ComputeStatistics();
+
+            foreach (float grade in book)
+            {
+                Console.WriteLine(grade);
+            }
+
             Console.WriteLine(book.Name);
             WriteResult("Average", stats.AverageGrade);
-            WriteResult("Highest Grade",(int) stats.HighestGrade);
-            WriteResult("Lowest Grade", (int) stats.LowestGrade);
-            book.Name = "Finished Grade Book";
+            WriteResult("Highest Grade", (int)stats.HighestGrade);
+            WriteResult("Lowest Grade", (int)stats.LowestGrade);
+            WriteResult(stats.Description, stats.LetterGrade);
+        }
+
+        private static void SaveGrades(IGradeTracker book)
+        {
+            using (StreamWriter outPutFile = File.CreateText("grades.txt"))
+            {
+                book.WriteGrades(outPutFile);
+            }
+        }
+
+        private static void AddGrades(IGradeTracker book)
+        {
+            book.AddGrade(91);
+            book.AddGrade(85.5f);
+            book.AddGrade(75);
+        }
+
+        private static void GetBookName(IGradeTracker book)
+        {
+            try
+            {
+                Console.WriteLine("Enter a name for Grade Book");
+                book.Name = Console.ReadLine();
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         static void OnNameChanged(object sender, NameChangedEventArgs args)
@@ -38,6 +79,10 @@ namespace Grades
         static void WriteResult(string description, float result)
         {
             Console.WriteLine($"{description}: {result:F2}");
-        } 
+        }
+        static void WriteResult(string description, string result)
+        {
+            Console.WriteLine($"{description}: {result}");
+        }
     }
 }
